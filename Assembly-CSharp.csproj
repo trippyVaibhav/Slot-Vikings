@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{592BC38D-E663-F75B-2490-9B2C28C723C4}</ProjectGuid>
+    <ProjectGuid>{F051B998-9B77-A863-770A-89A504C9E15C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -1307,11 +1307,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{28523FDB-9800-5ADE-7695-31002AF7F2A8}</Project>
+      <Project>{EC046EBB-9B74-9DD0-55DC-B55D23668F18}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
     <ProjectReference Include="BestHTTP.csproj">
-      <Project>{7959EB7E-0940-3875-E2C7-753B905E5802}</Project>
+      <Project>{B18BF1F8-D4DB-68DC-257D-C9B49EA855CC}</Project>
       <Name>BestHTTP</Name>
     </ProjectReference>
   </ItemGroup>
