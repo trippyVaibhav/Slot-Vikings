@@ -90,6 +90,12 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField]
     private Button AutoSpin_Button;
     [SerializeField]
+    private Sprite AutoSpinHover_Sprite;
+    [SerializeField]
+    private Sprite AutoSpin_Sprite;
+    [SerializeField]
+    private Image AutoSpin_Image;
+    [SerializeField]
     private Button MaxBet_Button;
     [SerializeField]
     private Button BetPlus_Button;
@@ -130,13 +136,14 @@ public class SlotBehaviour : MonoBehaviour
 
     [SerializeField]
     private SocketIOManager SocketManager;
-    //Coroutine AutoSpinRoutine = null;
+    Coroutine AutoSpinRoutine = null;
+    bool IsAutoSpin = false;
 
     private void Start()
     {
-
+        IsAutoSpin = false;
         if (SlotStart_Button) SlotStart_Button.onClick.RemoveAllListeners();
-        if (SlotStart_Button) SlotStart_Button.onClick.AddListener(StartSlots);
+        if (SlotStart_Button) SlotStart_Button.onClick.AddListener(delegate { StartSlots(); });
 
         if (BetPlus_Button) BetPlus_Button.onClick.RemoveAllListeners();
         if (BetPlus_Button) BetPlus_Button.onClick.AddListener(delegate { ChangeBet(true); });
@@ -151,11 +158,41 @@ public class SlotBehaviour : MonoBehaviour
         if (MaxBet_Button) MaxBet_Button.onClick.RemoveAllListeners();
         if (MaxBet_Button) MaxBet_Button.onClick.AddListener(MaxBet);
 
-        //if (AutoSpin_Button) AutoSpin_Button.onClick.RemoveAllListeners();
-        //if (AutoSpin_Button) AutoSpin_Button.onClick.AddListener(AutoSpin);
-        //numberOfSlots = 5;
-        //PopulateInitalSlots(numberOfSlots);
-        //FetchLines();
+        if (AutoSpin_Button) AutoSpin_Button.onClick.RemoveAllListeners();
+        if (AutoSpin_Button) AutoSpin_Button.onClick.AddListener(AutoSpin);
+    }
+
+    private void AutoSpin()
+    {
+        IsAutoSpin = !IsAutoSpin;
+        if(IsAutoSpin)
+        {
+            if (AutoSpin_Image) AutoSpin_Image.sprite = AutoSpinHover_Sprite;
+            if(AutoSpinRoutine != null)
+            {
+                StopCoroutine(AutoSpinRoutine);
+                AutoSpinRoutine = null;
+            }
+            AutoSpinRoutine = StartCoroutine(AutoSpinCoroutine());
+        }
+        else
+        {
+            if (AutoSpin_Image) AutoSpin_Image.sprite = AutoSpin_Sprite;
+            if (AutoSpinRoutine != null)
+            {
+                StopCoroutine(AutoSpinRoutine);
+                AutoSpinRoutine = null;
+            }
+        }
+    }
+
+    private IEnumerator AutoSpinCoroutine()
+    {
+        while(true)
+        {
+            StartSlots(true);
+            yield return new WaitForSeconds(10);
+        }
     }
 
     //Fetch Lines from backend
@@ -435,8 +472,18 @@ public class SlotBehaviour : MonoBehaviour
     }
 
     //starts the spin process
-    private void StartSlots()
+    private void StartSlots(bool autoSpin = false)
     {
+        if(!autoSpin)
+        {
+            if (AutoSpin_Image) AutoSpin_Image.sprite = AutoSpin_Sprite;
+            if (AutoSpinRoutine != null)
+            {
+                StopCoroutine(AutoSpinRoutine);
+                AutoSpinRoutine = null;
+            }
+        }
+
         if (SlotStart_Button) SlotStart_Button.interactable = false;
         if (TempList.Count > 0)
         {

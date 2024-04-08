@@ -16384,6 +16384,9 @@ MonoBehaviour:
   Lines_text: {fileID: 707535442}
   TotalWin_text: {fileID: 576684260}
   AutoSpin_Button: {fileID: 271841706}
+  AutoSpinHover_Sprite: {fileID: 21300000, guid: 6f0ba933576374a358734291c05c393d, type: 3}
+  AutoSpin_Sprite: {fileID: 21300000, guid: e9a55e1edc0184edda1d708022f424b4, type: 3}
+  AutoSpin_Image: {fileID: 271841707}
   MaxBet_Button: {fileID: 1237956803}
   BetPlus_Button: {fileID: 1550566148}
   BetMinus_Button: {fileID: 685179760}
