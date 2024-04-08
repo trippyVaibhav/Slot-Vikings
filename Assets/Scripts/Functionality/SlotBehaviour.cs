@@ -24,10 +24,10 @@ public class SlotBehaviour : MonoBehaviour
 
     [Header("Slots Objects")]
     [SerializeField]
-    private GameObject[] Slot_Objects; 
+    private GameObject[] Slot_Objects;
     [Header("Slots Elements")]
     [SerializeField]
-    private LayoutElement[] Slot_Elements;  
+    private LayoutElement[] Slot_Elements;
 
     [Header("Slots Transforms")]
     [SerializeField]
@@ -113,6 +113,9 @@ public class SlotBehaviour : MonoBehaviour
     private Tweener tweener3;
     private Tweener tweener4;
     private Tweener tweener5;
+
+    private List<Tweener> alltweens = new List<Tweener>();
+
 
     [SerializeField]
     private List<ImageAnimation> TempList;  //stores the sprites whose animation is running at present 
@@ -313,10 +316,10 @@ public class SlotBehaviour : MonoBehaviour
         if (SlotStart_Button) SlotStart_Button.interactable = true;
     }
 
-    private void PopulateSlot(List<int> values , int number)
+    private void PopulateSlot(List<int> values, int number)
     {
         if (Slot_Objects[number]) Slot_Objects[number].SetActive(true);
-        for(int i = 0; i<values.Count; i++)
+        for (int i = 0; i < values.Count; i++)
         {
             GameObject myImg = Instantiate(Image_Prefab, Slot_Transform[number]);
             images[number].slotImages.Add(myImg.GetComponent<Image>());
@@ -337,7 +340,7 @@ public class SlotBehaviour : MonoBehaviour
     //function to populate animation sprites accordingly
     private void PopulateAnimationSprites(ImageAnimation animScript, int val)
     {
-        switch(val)
+        switch (val)
         {
             case 0:
                 for (int i = 0; i < Bonus_Sprite.Length; i++)
@@ -435,7 +438,7 @@ public class SlotBehaviour : MonoBehaviour
     private void StartSlots()
     {
         if (SlotStart_Button) SlotStart_Button.interactable = false;
-        if (TempList.Count > 0) 
+        if (TempList.Count > 0)
         {
             StopGameAnimation();
         }
@@ -451,61 +454,22 @@ public class SlotBehaviour : MonoBehaviour
     //manage the Routine for spinning of the slots
     private IEnumerator TweenRoutine()
     {
-        if (numberOfSlots >= 1)
+        for (int i = 0; i < numberOfSlots; i++)
         {
-            InitializeTweening1(Slot_Transform[0]);
+            InitializeTweening(Slot_Transform[i]);
+            yield return new WaitForSeconds(0.1f);
         }
-        yield return new WaitForSeconds(0.1f);
 
-        if (numberOfSlots >= 2)
-        {
-            InitializeTweening2(Slot_Transform[1]);
-        }
-        yield return new WaitForSeconds(0.1f);
-
-        if (numberOfSlots >= 3)
-        {
-            InitializeTweening3(Slot_Transform[2]);
-        }
-        yield return new WaitForSeconds(0.1f);
-
-        if (numberOfSlots >= 4)
-        {
-            InitializeTweening4(Slot_Transform[3]);
-        }
-        yield return new WaitForSeconds(0.1f);
-
-        if (numberOfSlots >= 5)
-        {
-            InitializeTweening5(Slot_Transform[4]);
-        }
         SocketManager.AccumulateResult();
         yield return new WaitForSeconds(0.5f);
         List<int> resultnum = SocketManager.tempresult.StopList?.Split(',')?.Select(Int32.Parse)?.ToList();
-        if (numberOfSlots >= 1)
+
+        for (int i = 0; i < numberOfSlots; i++)
         {
-            StopTweening1(resultnum[0]+3, Slot_Transform[0]);
+            yield return StopTweening(resultnum[i] + 3, Slot_Transform[i], i);
         }
-        yield return new WaitForSeconds(0.3f);
-        if (numberOfSlots >= 2)
-        {
-            StopTweening2(resultnum[1]+3, Slot_Transform[1]);
-        }
-        yield return new WaitForSeconds(0.3f);
-        if (numberOfSlots >= 3)
-        {
-            StopTweening3(resultnum[2]+3, Slot_Transform[2]);
-        }
-        yield return new WaitForSeconds(0.3f);
-        if (numberOfSlots >= 4)
-        {
-            StopTweening4(resultnum[3]+3, Slot_Transform[3]);
-        }
-        yield return new WaitForSeconds(0.3f);
-        if (numberOfSlots >= 5)
-        {
-            StopTweening5(resultnum[4]+3, Slot_Transform[4]);
-        }
+
+
         yield return new WaitForSeconds(0.3f);
         GenerateMatrix(SocketManager.tempresult.StopList);
         CheckPayoutLineBackend(SocketManager.tempresult.resultLine, SocketManager.tempresult.x_animResult, SocketManager.tempresult.y_animResult);
@@ -514,7 +478,7 @@ public class SlotBehaviour : MonoBehaviour
     }
 
     //start the icons animation
-    private void StartGameAnimation(GameObject animObjects) 
+    private void StartGameAnimation(GameObject animObjects)
     {
         ImageAnimation temp = animObjects.GetComponent<ImageAnimation>();
         temp.StartAnimation();
@@ -566,81 +530,39 @@ public class SlotBehaviour : MonoBehaviour
         {
             for (int s = 0; s < verticalVisibility; s++)
             {
-                Tempimages[i].slotImages.Add(images[i].slotImages[(images[i].slotImages.Count - (numbers[i]+3)) + s]);
+                Tempimages[i].slotImages.Add(images[i].slotImages[(images[i].slotImages.Count - (numbers[i] + 3)) + s]);
             }
         }
     }
 
     #region TweeningCode
-    private void InitializeTweening1(Transform slotTransform)
+    private void InitializeTweening(Transform slotTransform)
     {
         slotTransform.localPosition = new Vector2(slotTransform.localPosition.x, 0);
-        tweener1 = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
-        tweener1.Play();
-    }
-    private void InitializeTweening2(Transform slotTransform)
-    {
-        slotTransform.localPosition = new Vector2(slotTransform.localPosition.x, 0);
-        tweener2 = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
-        tweener2.Play();
-    }
-    private void InitializeTweening3(Transform slotTransform)
-    {
-        slotTransform.localPosition = new Vector2(slotTransform.localPosition.x, 0);
-        tweener3 = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
-        tweener3.Play();
-    }
-    private void InitializeTweening4(Transform slotTransform)
-    {
-        slotTransform.localPosition = new Vector2(slotTransform.localPosition.x, 0);
-        tweener4 = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
-        tweener4.Play();
-    }
-    private void InitializeTweening5(Transform slotTransform)
-    {
-        slotTransform.localPosition = new Vector2(slotTransform.localPosition.x, 0);
-        tweener5 = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
-        tweener5.Play();
+        Tweener tweener = slotTransform.DOLocalMoveY(-tweenHeight, 0.2f).SetLoops(-1, LoopType.Restart).SetDelay(0);
+        tweener.Play();
+        alltweens.Add(tweener);
     }
 
-    private void StopTweening1(int reqpos, Transform slotTransform)
+
+
+    private IEnumerator StopTweening(int reqpos, Transform slotTransform, int index)
     {
-        tweener1.Pause();
+        alltweens[index].Pause();
         int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        tweener1 = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
+        alltweens[index] = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
+        yield return new WaitForSeconds(0.2f);
     }
-    private void StopTweening2(int reqpos, Transform slotTransform)
-    {
-        tweener2.Pause();
-        int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        tweener2 = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
-    }
-    private void StopTweening3(int reqpos, Transform slotTransform)
-    {
-        tweener3.Pause();
-        int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        tweener3 = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
-    }
-    private void StopTweening4(int reqpos, Transform slotTransform)
-    {
-        tweener4.Pause();
-        int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        tweener4 = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
-    }
-    private void StopTweening5(int reqpos, Transform slotTransform)
-    {
-        tweener5.Pause();
-        int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        tweener5 = slotTransform.DOLocalMoveY(-tweenpos + 100, 0.5f).SetEase(Ease.OutElastic);
-    }
+
 
     private void KillAllTweens()
     {
-        tweener1.Kill();
-        tweener2.Kill();
-        tweener3.Kill();
-        tweener4.Kill();
-        tweener5.Kill();
+        for (int i = 0; i < numberOfSlots; i++)
+        {
+            alltweens[i].Kill();
+        }
+        alltweens.Clear();
+
     }
     #endregion
 
