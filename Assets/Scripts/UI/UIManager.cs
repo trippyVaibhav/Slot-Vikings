@@ -68,6 +68,27 @@ public class UIManager : MonoBehaviour
     private GameObject SettingsPopup_Object;
     [SerializeField]
     private Button SettingsExit_Button;
+    [SerializeField]
+    private Button Sound_Button;
+    [SerializeField]
+    private Button Music_Button;
+    [SerializeField]
+    private AudioSource BG_Sounds;
+    [SerializeField]
+    private AudioSource Button_Sounds;
+    [SerializeField]
+    private AudioSource Spin_Sounds;
+    [SerializeField]
+    private GameObject MusicOn_Object;
+    [SerializeField]
+    private GameObject MusicOff_Object;
+    [SerializeField]
+    private GameObject SoundOn_Object;
+    [SerializeField]
+    private GameObject SoundOff_Object;
+
+    private bool isMusic = true;
+    private bool isSound = true;
 
 
     private void Start()
@@ -95,6 +116,25 @@ public class UIManager : MonoBehaviour
 
         if (SettingsExit_Button) SettingsExit_Button.onClick.RemoveAllListeners();
         if (SettingsExit_Button) SettingsExit_Button.onClick.AddListener(delegate { ClosePopup(SettingsPopup_Object); });
+
+        if (MusicOn_Object) MusicOn_Object.SetActive(true);
+        if (MusicOff_Object) MusicOff_Object.SetActive(false);
+
+        if (SoundOn_Object) SoundOn_Object.SetActive(true);
+        if (SoundOff_Object) SoundOff_Object.SetActive(false);
+
+        if (BG_Sounds) BG_Sounds.mute = false;
+        if (Spin_Sounds) Spin_Sounds.mute = false;
+        if (Button_Sounds) Button_Sounds.mute = false;
+
+        isMusic = true;
+        isSound = true;
+
+        if (Sound_Button) Sound_Button.onClick.RemoveAllListeners();
+        if (Sound_Button) Sound_Button.onClick.AddListener(ToggleSound);
+
+        if (Music_Button) Music_Button.onClick.RemoveAllListeners();
+        if (Music_Button) Music_Button.onClick.AddListener(ToggleMusic);
 
     }
 
@@ -160,5 +200,41 @@ public class UIManager : MonoBehaviour
     {
         if (Popup) Popup.SetActive(false);
         if (MainPopup_Object) MainPopup_Object.SetActive(false);
+    }
+
+    private void ToggleMusic()
+    {
+        isMusic = !isMusic;
+        if(isMusic)
+        {
+            if (MusicOn_Object) MusicOn_Object.SetActive(true);
+            if (MusicOff_Object) MusicOff_Object.SetActive(false);
+            if (BG_Sounds) BG_Sounds.mute = false;
+        }
+        else
+        {
+            if (MusicOn_Object) MusicOn_Object.SetActive(false);
+            if (MusicOff_Object) MusicOff_Object.SetActive(true);
+            if (BG_Sounds) BG_Sounds.mute = true;
+        }
+    }
+
+    private void ToggleSound()
+    {
+        isSound = !isSound;
+        if(isSound)
+        {
+            if (SoundOn_Object) SoundOn_Object.SetActive(true);
+            if (SoundOff_Object) SoundOff_Object.SetActive(false);
+            if (Spin_Sounds) Spin_Sounds.mute = false;
+            if (Button_Sounds) Button_Sounds.mute = false;
+        }
+        else
+        {
+            if (SoundOn_Object) SoundOn_Object.SetActive(false);
+            if (SoundOff_Object) SoundOff_Object.SetActive(true);
+            if (Spin_Sounds) Spin_Sounds.mute = true;
+            if (Button_Sounds) Button_Sounds.mute = true;
+        }
     }
 }

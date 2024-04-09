@@ -106,6 +106,16 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField]
     private Button LineMinus_Button;
 
+    [Header("Audio Management")]
+    [SerializeField]
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _spinSound;
+    [SerializeField]
+    private AudioClip _lossSound;
+    [SerializeField]
+    private AudioClip[] _winSounds;
+
     int tweenHeight = 0;  //calculate the height at which tweening is done
 
     [SerializeField]
@@ -113,12 +123,6 @@ public class SlotBehaviour : MonoBehaviour
 
     [SerializeField]
     private PayoutCalculation PayCalculator;
-
-    private Tweener tweener1;
-    private Tweener tweener2;
-    private Tweener tweener3;
-    private Tweener tweener4;
-    private Tweener tweener5;
 
     private List<Tweener> alltweens = new List<Tweener>();
 
@@ -474,6 +478,10 @@ public class SlotBehaviour : MonoBehaviour
     //starts the spin process
     private void StartSlots(bool autoSpin = false)
     {
+        if (_audioSource) _audioSource.clip = _spinSound;
+        if (_audioSource) _audioSource.loop = true;
+        if (_audioSource) _audioSource.Play();
+
         if(!autoSpin)
         {
             if (AutoSpin_Image) AutoSpin_Image.sprite = AutoSpin_Sprite;
@@ -516,7 +524,6 @@ public class SlotBehaviour : MonoBehaviour
             yield return StopTweening(resultnum[i] + 3, Slot_Transform[i], i);
         }
 
-
         yield return new WaitForSeconds(0.3f);
         GenerateMatrix(SocketManager.tempresult.StopList);
         CheckPayoutLineBackend(SocketManager.tempresult.resultLine, SocketManager.tempresult.x_animResult, SocketManager.tempresult.y_animResult);
@@ -548,23 +555,38 @@ public class SlotBehaviour : MonoBehaviour
         List<int> y_points = null;
         List<int> x_anim = null;
         List<int> y_anim = null;
-
-        for (int i = 0; i < LineId.Count; i++)
+        if (LineId.Count > 0)
         {
-            x_points = x_string[LineId[i]]?.Split(',')?.Select(Int32.Parse)?.ToList();
-            y_points = y_string[LineId[i]]?.Split(',')?.Select(Int32.Parse)?.ToList();
-            PayCalculator.GeneratePayoutLinesBackend(x_points, y_points, x_points.Count);
-        }
+            int choice = UnityEngine.Random.Range(0, 2);
+            if (_audioSource) _audioSource.Stop();
+            if (_audioSource) _audioSource.loop = false;
+            if (_audioSource) _audioSource.clip = _winSounds[choice];
+            if (_audioSource) _audioSource.Play();
 
-        for (int i = 0; i < x_AnimString.Count; i++)
-        {
-            x_anim = x_AnimString[i]?.Split(',')?.Select(Int32.Parse)?.ToList();
-            y_anim = y_AnimString[i]?.Split(',')?.Select(Int32.Parse)?.ToList();
-
-            for (int k = 0; k < x_anim.Count; k++)
+            for (int i = 0; i < LineId.Count; i++)
             {
-                StartGameAnimation(Tempimages[x_anim[k]].slotImages[y_anim[k]].gameObject);
+                x_points = x_string[LineId[i]]?.Split(',')?.Select(Int32.Parse)?.ToList();
+                y_points = y_string[LineId[i]]?.Split(',')?.Select(Int32.Parse)?.ToList();
+                PayCalculator.GeneratePayoutLinesBackend(x_points, y_points, x_points.Count);
             }
+
+            for (int i = 0; i < x_AnimString.Count; i++)
+            {
+                x_anim = x_AnimString[i]?.Split(',')?.Select(Int32.Parse)?.ToList();
+                y_anim = y_AnimString[i]?.Split(',')?.Select(Int32.Parse)?.ToList();
+
+                for (int k = 0; k < x_anim.Count; k++)
+                {
+                    StartGameAnimation(Tempimages[x_anim[k]].slotImages[y_anim[k]].gameObject);
+                }
+            }
+        }
+        else
+        {
+            if (_audioSource) _audioSource.Stop();
+            if (_audioSource) _audioSource.loop = false;
+            if (_audioSource) _audioSource.clip = _lossSound;
+            if (_audioSource) _audioSource.Play();
         }
     }
 
