@@ -224,18 +224,7 @@ public class UIManager : MonoBehaviour
 
         }
            
-        //if (isMusic)
-        //{
-        //    if (MusicOn_Object) MusicOn_Object.SetActive(true);
-        //    if (MusicOff_Object) MusicOff_Object.SetActive(false);
-        //    if (BG_Sounds) BG_Sounds.mute = false;
-        //}
-        //else
-        //{
-        //    if (MusicOn_Object) MusicOn_Object.SetActive(false);
-        //    if (MusicOff_Object) MusicOff_Object.SetActive(true);
-        //    if (BG_Sounds) BG_Sounds.mute = true;
-        //}
+
     }
 
     private void ToggleSound()
@@ -256,19 +245,6 @@ public class UIManager : MonoBehaviour
             if (audioController) audioController.ToggleMute(true,"wl");
 
         }
-        //if (isSound)
-        //{
-        //    if (SoundOn_Object) SoundOn_Object.SetActive(true);
-        //    if (SoundOff_Object) SoundOff_Object.SetActive(false);
-        //    if (Spin_Sounds) Spin_Sounds.mute = false;
-        //    if (Button_Sounds) Button_Sounds.mute = false;
-        //}
-        //else
-        //{
-        //    if (SoundOn_Object) SoundOn_Object.SetActive(false);
-        //    if (SoundOff_Object) SoundOff_Object.SetActive(true);
-        //    if (Spin_Sounds) Spin_Sounds.mute = true;
-        //    if (Button_Sounds) Button_Sounds.mute = true;
-        //}
+
     }
 }
