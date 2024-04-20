@@ -34,12 +34,20 @@ public class ImageAnimation : MonoBehaviour
 
 	public float delayBetweenLoop;
 
+	[SerializeField]
+	private Sprite OriginalSprite;
+
 	private void Awake()
 	{
 		if (Instance == null)
 		{
 			Instance = this;
 		}
+	}
+
+	private void Start()
+	{
+		OriginalSprite = rendererDelegate.sprite;
 	}
 
 	private void OnEnable()
@@ -105,6 +113,10 @@ public class ImageAnimation : MonoBehaviour
 	{
 		if (currentAnimationState != 0)
 		{
+			if (OriginalSprite != null)
+				rendererDelegate.sprite = OriginalSprite;
+			else
+				rendererDelegate.sprite = textureArray[0];
 			rendererDelegate.sprite = textureArray[0];
 			CancelInvoke("AnimationProcess");
 			currentAnimationState = ImageState.NONE;
