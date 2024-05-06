@@ -41,6 +41,14 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField]
     private List<TMP_Text> StaticLine_Texts;
 
+    [Header("Line Button Objects")]
+    [SerializeField]
+    private List<ManageLineButtons> StaticLine_Scripts;
+
+    [Header("Line Button Objects")]
+    [SerializeField]
+    private List<Button> StaticLine_Buttons;
+
     private Dictionary<int, string> x_string = new Dictionary<int, string>();
     private Dictionary<int, string> y_string = new Dictionary<int, string>();
 
@@ -136,9 +144,15 @@ public class SlotBehaviour : MonoBehaviour
     bool IsAutoSpin = false;
     bool IsSpinning = false;
 
+    internal int linecounter = 20;
+
     private void Start()
     {
         IsAutoSpin = false;
+        if (Lines_text != null)
+        {
+            Lines_text.text = "20";
+        }
         if (SlotStart_Button) SlotStart_Button.onClick.RemoveAllListeners();
         if (SlotStart_Button) SlotStart_Button.onClick.AddListener(delegate { StartSlots(); });
 
@@ -260,53 +274,53 @@ public class SlotBehaviour : MonoBehaviour
         if (TotalBet_text) TotalBet_text.text = "99999";
     }
 
-    private void ChangeLine(bool IncDec)
+    internal void ChangeLine(bool IncDec)
     {
-        if (audioController) audioController.PlayButtonAudio();
-        double currentline = 1;
-        try
-        {
-            currentline = double.Parse(Lines_text.text);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("parse error " + e);
-        }
+
+        if (audioController)
+            audioController.PlayButtonAudio();
+
+
+
+        PayCalculator.ResetLines();
         if (IncDec)
         {
-            if (currentline < 20)
-            {
-                currentline += 1;
-            }
-            else
-            {
-                currentline = 20;
-            }
-
-            if (currentline > 20)
-            {
-                currentline = 20;
-            }
+            linecounter++;
         }
         else
         {
-            if (currentline > 1)
-            {
-                currentline -= 1;
-            }
-            else
-            {
-                currentline = 1;
-            }
-
-            if (currentline < 1)
-            {
-                currentline = 1;
-            }
+            linecounter--;
         }
 
-        if (Lines_text) Lines_text.text = currentline.ToString();
+        if (linecounter < 1)
+        {
+            linecounter = 1;
 
+        }
+        if (linecounter > 20)
+        {
+            linecounter = 20;
+        }
+
+
+        foreach (Button sb in StaticLine_Buttons)
+        {
+            sb.interactable = false;
+        }
+
+        foreach (ManageLineButtons sb in StaticLine_Scripts)
+        {
+            sb.isActive = false;
+        }
+
+        for (int i = 1; i <= linecounter; i++)
+        {
+            Debug.Log("run this code" + linecounter);
+            Lines_text.text = i.ToString();
+            StaticLine_Buttons[i - 1].interactable = true;
+            StaticLine_Scripts[i - 1].isActive = true;
+            GenerateStaticLine(Lines_text);
+        }
     }
 
     private void ChangeBet(bool IncDec)

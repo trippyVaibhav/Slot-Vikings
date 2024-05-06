@@ -13,23 +13,28 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 	private SlotBehaviour slotManager;
 	[SerializeField]
 	private TMP_Text num_text;
+	internal bool isActive = false;
 
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		//if (Application.platform == RuntimePlatform.WebGLPlayer && !Application.isMobilePlatform)
-		//{
-			Debug.Log("run on pointer enter");
+
+		Debug.Log("run on pointer enter");
+		if (isActive)
+		{
 			slotManager.GenerateStaticLine(num_text);
-		//}
+		}
+
 	}
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		//if (Application.platform == RuntimePlatform.WebGLPlayer && !Application.isMobilePlatform)
-		//{
-			Debug.Log("run on pointer exit");
+
+		Debug.Log("run on pointer exit");
+		if (isActive)
+		{
 			slotManager.DestroyStaticLine();
-		//}
+		}
+
 	}
 	public void OnPointerDown(PointerEventData eventData)
 	{
