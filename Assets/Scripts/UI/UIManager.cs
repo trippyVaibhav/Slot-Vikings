@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 using System;
-
+using UnityEngine.Networking;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,12 +26,17 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private RectTransform About_RT;
 
+    [Header("Settings UI")]
     [SerializeField]
     private Button Settings_Button;
     [SerializeField]
     private GameObject Settings_Object;
     [SerializeField]
     private RectTransform Settings_RT;
+    [SerializeField]
+    private Button Terms_Button;
+    [SerializeField]
+    private Button Privacy_Button;
 
     [SerializeField]
     private Button Exit_Button;
@@ -56,12 +61,20 @@ public class UIManager : MonoBehaviour
     private GameObject AboutPopup_Object;
     [SerializeField]
     private Button AboutExit_Button;
+    [SerializeField]
+    private Image AboutLogo_Image;
+    [SerializeField]
+    private Button Support_Button;
 
     [Header("Paytable Popup")]
     [SerializeField]
     private GameObject PaytablePopup_Object;
     [SerializeField]
     private Button PaytableExit_Button;
+    [SerializeField]
+    private TMP_Text[] SymbolsText;
+    [SerializeField]
+    private TMP_Text[] SpecialSymbolsText;
 
     [Header("Settings Popup")]
     [SerializeField]
@@ -73,13 +86,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Button Music_Button;
 
-    //[SerializeField]
-    //private AudioSource BG_Sounds;
-    //[SerializeField]
-    //private AudioSource Button_Sounds;
-    //[SerializeField]
-    //private AudioSource Spin_Sounds;
-
     [SerializeField]
     private GameObject MusicOn_Object;
     [SerializeField]
@@ -89,7 +95,23 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject SoundOff_Object;
 
-    [SerializeField] private AudioController audioController;
+    [Header("Win Popup")]
+    [SerializeField]
+    private Sprite BigWin_Sprite;
+    [SerializeField]
+    private Sprite HugeWin_Sprite;
+    [SerializeField]
+    private Sprite MegaWin_Sprite;
+    [SerializeField]
+    private Image Win_Image;
+    [SerializeField]
+    private GameObject WinPopup_Object;
+
+    [SerializeField]
+    private AudioController audioController;
+
+    [SerializeField]
+    private Button GameExit_Button;
 
     private bool isMusic = true;
     private bool isSound = true;
@@ -127,6 +149,9 @@ public class UIManager : MonoBehaviour
         if (SoundOn_Object) SoundOn_Object.SetActive(true);
         if (SoundOff_Object) SoundOff_Object.SetActive(false);
 
+        if (GameExit_Button) GameExit_Button.onClick.RemoveAllListeners();
+        if (GameExit_Button) GameExit_Button.onClick.AddListener(CallOnExitFunction);
+
         if (audioController) audioController.ToggleMute(false);
 
         isMusic = true;
@@ -138,6 +163,80 @@ public class UIManager : MonoBehaviour
         if (Music_Button) Music_Button.onClick.RemoveAllListeners();
         if (Music_Button) Music_Button.onClick.AddListener(ToggleMusic);
 
+    }
+
+    private void PopulateWin(int value, int amount)
+    {
+        switch(value)
+        {
+            case 1:
+                if (Win_Image) Win_Image.sprite = BigWin_Sprite;
+                break;
+            case 2:
+                if (Win_Image) Win_Image.sprite = HugeWin_Sprite;
+                break;
+            case 3:
+                if (Win_Image) Win_Image.sprite = MegaWin_Sprite;
+                break;
+        }
+
+
+        if (WinPopup_Object) WinPopup_Object.SetActive(true);
+    }
+
+    internal void InitialiseUIData(string SupportUrl, string AbtImgUrl, string TermsUrl, string PrivacyUrl, Paylines symbolsText, List<string> Specialsymbols)
+    {
+        if (Support_Button) Support_Button.onClick.RemoveAllListeners();
+        if (Support_Button) Support_Button.onClick.AddListener(delegate { UrlButtons(SupportUrl); });
+
+        if (Terms_Button) Terms_Button.onClick.RemoveAllListeners();
+        if (Terms_Button) Terms_Button.onClick.AddListener(delegate { UrlButtons(TermsUrl); });
+
+        if (Privacy_Button) Privacy_Button.onClick.RemoveAllListeners();
+        if (Privacy_Button) Privacy_Button.onClick.AddListener(delegate { UrlButtons(PrivacyUrl); });
+
+        StartCoroutine(DownloadImage(AbtImgUrl));
+        PopulateSymbolsPayout(symbolsText);
+        PopulateSpecialSymbols(Specialsymbols);
+    }
+
+    private void PopulateSpecialSymbols(List<string> Specialtext)
+    {
+        for(int i = 0; i< SpecialSymbolsText.Length; i++)
+        {
+            if (SpecialSymbolsText[i]) SpecialSymbolsText[i].text = Specialtext[i];
+        }
+    }
+
+    private void PopulateSymbolsPayout(Paylines paylines)
+    {
+        for (int i = 0; i < paylines.symbols.Count; i++)
+        {
+            string text = null;
+            if (paylines.symbols[i].multiplier._5x != 0)
+            {
+                text += "5x - " + paylines.symbols[i].multiplier._5x;
+            }
+            if (paylines.symbols[i].multiplier._4x != 0)
+            {
+                text += "\n4x - " + paylines.symbols[i].multiplier._4x;
+            }
+            if (paylines.symbols[i].multiplier._3x != 0)
+            {
+                text += "\n3x - " + paylines.symbols[i].multiplier._3x;
+            }
+            if (paylines.symbols[i].multiplier._2x != 0)
+            {
+                text += "\n2x - " + paylines.symbols[i].multiplier._2x;
+            }
+            if (SymbolsText[i]) SymbolsText[i].text = text;
+        }
+    }
+
+    private void CallOnExitFunction()
+    {
+        // Send a message to the UnityBridge object
+        gameObject.SendMessage("UnityBridge.callOnExit");
     }
 
     private void OpenMenu()
@@ -215,16 +314,18 @@ public class UIManager : MonoBehaviour
             if (MusicOn_Object) MusicOn_Object.SetActive(true);
             if (MusicOff_Object) MusicOff_Object.SetActive(false);
             audioController.ToggleMute(false, "bg");
-
         }
-        else {
+        else
+        {
             if (MusicOn_Object) MusicOn_Object.SetActive(false);
             if (MusicOff_Object) MusicOff_Object.SetActive(true);
             audioController.ToggleMute(true, "bg");
-
         }
-           
+    }
 
+    private void UrlButtons(string url)
+    {
+        Application.OpenURL(url);
     }
 
     private void ToggleSound()
@@ -238,13 +339,36 @@ public class UIManager : MonoBehaviour
             if (audioController) audioController.ToggleMute(false,"wl");
 
         }
-        else {
+        else
+        {
             if (SoundOn_Object) SoundOn_Object.SetActive(false);
             if (SoundOff_Object) SoundOff_Object.SetActive(true);
             if(audioController) audioController.ToggleMute(true,"button");
             if (audioController) audioController.ToggleMute(true,"wl");
-
         }
+    }
 
+    private IEnumerator DownloadImage(string url)
+    {
+        // Create a UnityWebRequest object to download the image
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+
+        // Wait for the download to complete
+        yield return request.SendWebRequest();
+
+        // Check for errors
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+
+            // Apply the sprite to the target image
+            AboutLogo_Image.sprite = sprite;
+        }
+        else
+        {
+            Debug.LogError("Error downloading image: " + request.error);
+        }
     }
 }

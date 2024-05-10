@@ -66,8 +66,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_improveResolution: 0
-  m_Resolution: 0
+  m_improveResolution: 1
+  m_Resolution: 10
   m_useNativeSize: 0
   m_points:
   - {x: 0, y: 0}
