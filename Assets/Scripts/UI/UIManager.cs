@@ -106,6 +106,8 @@ public class UIManager : MonoBehaviour
     private Image Win_Image;
     [SerializeField]
     private GameObject WinPopup_Object;
+    [SerializeField]
+    private TMP_Text Win_Text;
 
     [SerializeField]
     private AudioController audioController;
@@ -119,6 +121,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+
         if (Menu_Button) Menu_Button.onClick.RemoveAllListeners();
         if (Menu_Button) Menu_Button.onClick.AddListener(OpenMenu);
 
@@ -165,7 +168,7 @@ public class UIManager : MonoBehaviour
 
     }
 
-    private void PopulateWin(int value, int amount)
+    internal void PopulateWin(int value, double amount)
     {
         switch(value)
         {
@@ -180,8 +183,25 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
+        StartPopupAnim(amount);
+    }
 
+    private void StartPopupAnim(double amount)
+    {
+        int initAmount = 0;
         if (WinPopup_Object) WinPopup_Object.SetActive(true);
+        if (MainPopup_Object) MainPopup_Object.SetActive(true);
+
+        DOTween.To(() => initAmount, (val) => initAmount = val, (int)amount, 5f).OnUpdate(() =>
+        {
+            if (Win_Text) Win_Text.text = initAmount.ToString();
+        });
+
+        DOVirtual.DelayedCall(6f, () =>
+        {
+            if (WinPopup_Object) WinPopup_Object.SetActive(false);
+            if (MainPopup_Object) MainPopup_Object.SetActive(false);
+        });
     }
 
     internal void InitialiseUIData(string SupportUrl, string AbtImgUrl, string TermsUrl, string PrivacyUrl, Paylines symbolsText, List<string> Specialsymbols)
@@ -235,8 +255,7 @@ public class UIManager : MonoBehaviour
 
     private void CallOnExitFunction()
     {
-        // Send a message to the UnityBridge object
-        gameObject.SendMessage("UnityBridge.callOnExit");
+        Application.ExternalCall("window.parent.postMessage", "onExit", "*");
     }
 
     private void OpenMenu()
@@ -337,7 +356,6 @@ public class UIManager : MonoBehaviour
             if (SoundOff_Object) SoundOff_Object.SetActive(false);
             if (audioController) audioController.ToggleMute(false,"button");
             if (audioController) audioController.ToggleMute(false,"wl");
-
         }
         else
         {

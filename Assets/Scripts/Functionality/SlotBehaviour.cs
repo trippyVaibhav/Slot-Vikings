@@ -556,6 +556,19 @@ public class SlotBehaviour : MonoBehaviour
         }
         if (TotalWin_text) TotalWin_text.text = SocketManager.playerdata.haveWon.ToString();
         if (Balance_text) Balance_text.text = SocketManager.playerdata.Balance.ToString();
+
+        if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10)
+        {
+            uiManager.PopulateWin(1, SocketManager.resultData.WinAmout);
+        }
+        else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15)
+        {
+            uiManager.PopulateWin(2, SocketManager.resultData.WinAmout);
+        }
+        else if (SocketManager.resultData.WinAmout >= bet * 15)
+        {
+            uiManager.PopulateWin(3, SocketManager.resultData.WinAmout);
+        }
     }
 
     void ToggleButtonGrp(bool toggle)

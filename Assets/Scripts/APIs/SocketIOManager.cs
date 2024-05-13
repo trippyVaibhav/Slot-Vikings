@@ -34,7 +34,13 @@ public class SocketIOManager : MonoBehaviour
         var webSocket = new WebSocket(new Uri("wss://slotwebsocket.onrender.com"));
         webSocket.OnOpen += OnWebSocketOpen;
         webSocket.OnMessage += OnMessageReceived;
+        webSocket.OnError += OnWebSocketError;
         webSocket.Open();
+    }
+
+    private void OnWebSocketError(WebSocket webSocket, string message)
+    {
+        Debug.Log(message);
     }
 
     private void OnWebSocketOpen(WebSocket webSocket)
@@ -65,7 +71,6 @@ public class SocketIOManager : MonoBehaviour
                     playerdata = myData.message.PlayerData;
                     List<string> LinesString = ConvertListListIntToListString(initialData.Lines);
                     List<string> InitialReels = ConvertListOfListsToStrings(initialData.Reel);
-                    Debug.Log(InitialReels[0]);
                     InitialReels = RemoveQuotes(InitialReels);
                     PopulateSlotSocket(InitialReels, LinesString);
                     break;
@@ -102,6 +107,8 @@ public class SocketIOManager : MonoBehaviour
         }
 
         slotManager.SetInitialUI();
+
+        Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
     }
 
     internal void AccumulateResult(double currBet)
@@ -109,17 +116,17 @@ public class SocketIOManager : MonoBehaviour
         if (currentSocket != null)
         {
             isResultdone = false;
-            SendDataWithNamespace("Spin", 5, currentSocket);
+            SendDataWithNamespace("Spin", currBet, currentSocket);
         }
     }
 
-    private void SendDataWithNamespace(string namespaceName, double data, WebSocket webSocket)
+    private void SendDataWithNamespace(string namespaceName, double bet, WebSocket webSocket)
     {
         // Construct message data
 
         MessageData message = new MessageData();
         message.Data = new BetData();
-        message.Data.CurrentBet = data;
+        message.Data.CurrentBet = bet;
         message.id = namespaceName;
         // Serialize message data to JSON
         string json = JsonUtility.ToJson(message);
