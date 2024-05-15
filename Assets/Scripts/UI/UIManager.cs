@@ -103,11 +103,21 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Sprite MegaWin_Sprite;
     [SerializeField]
+    private Sprite Jackpot_Sprite;
+    [SerializeField]
     private Image Win_Image;
     [SerializeField]
     private GameObject WinPopup_Object;
     [SerializeField]
     private TMP_Text Win_Text;
+
+    [Header("FreeSpins Popup")]
+    [SerializeField]
+    private GameObject FreeSpinPopup_Object;
+    [SerializeField]
+    private TMP_Text Free_Text;
+    [SerializeField]
+    private Button FreeSpin_Button;
 
     [SerializeField]
     private AudioController audioController;
@@ -115,8 +125,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Button GameExit_Button;
 
+    [SerializeField]
+    private SlotBehaviour slotManager;
+
     private bool isMusic = true;
     private bool isSound = true;
+
+    private int FreeSpins;
 
 
     private void Start()
@@ -155,6 +170,9 @@ public class UIManager : MonoBehaviour
         if (GameExit_Button) GameExit_Button.onClick.RemoveAllListeners();
         if (GameExit_Button) GameExit_Button.onClick.AddListener(CallOnExitFunction);
 
+        if (FreeSpin_Button) FreeSpin_Button.onClick.RemoveAllListeners();
+        if (FreeSpin_Button) FreeSpin_Button.onClick.AddListener(delegate{ StartFreeSpins(FreeSpins); });
+
         if (audioController) audioController.ToggleMute(false);
 
         isMusic = true;
@@ -181,9 +199,27 @@ public class UIManager : MonoBehaviour
             case 3:
                 if (Win_Image) Win_Image.sprite = MegaWin_Sprite;
                 break;
+            case 4:
+                if (Win_Image) Win_Image.sprite = Jackpot_Sprite;
+                break;
         }
 
         StartPopupAnim(amount);
+    }
+
+    private void StartFreeSpins(int spins)
+    {
+        if (MainPopup_Object) MainPopup_Object.SetActive(false);
+        if (FreeSpinPopup_Object) FreeSpinPopup_Object.SetActive(false);
+        slotManager.FreeSpin(spins);
+    }
+
+    internal void FreeSpinProcess(int spins)
+    {
+        FreeSpins = spins;
+        if (FreeSpinPopup_Object) FreeSpinPopup_Object.SetActive(true);
+        if (Free_Text) Free_Text.text = spins.ToString();
+        if (MainPopup_Object) MainPopup_Object.SetActive(true);
     }
 
     private void StartPopupAnim(double amount)
@@ -201,6 +237,7 @@ public class UIManager : MonoBehaviour
         {
             if (WinPopup_Object) WinPopup_Object.SetActive(false);
             if (MainPopup_Object) MainPopup_Object.SetActive(false);
+            slotManager.CheckBonusGame();
         });
     }
 
