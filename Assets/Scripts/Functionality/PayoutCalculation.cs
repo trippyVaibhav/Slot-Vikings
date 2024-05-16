@@ -18,19 +18,17 @@ public class PayoutCalculation : MonoBehaviour
     [SerializeField]
     private Vector2 InitialLinePosition = new Vector2(-315, 100);
 
-
-
     GameObject TempObj = null;
 
     //generate lines at runtime accordingly
-    internal void GeneratePayoutLinesBackend(List<int> x_index, List<int> y_index, int Count, bool isStatic = false)
+    internal void GeneratePayoutLinesBackend(List<int> y_index, int Count, bool isStatic = false)
     {
         GameObject MyLineObj = Instantiate(Line_Prefab, LineContainer);
         MyLineObj.transform.localPosition = new Vector2(InitialLinePosition.x, InitialLinePosition.y);
         UILineRenderer MyLine = MyLineObj.GetComponent<UILineRenderer>();
         for (int i = 0; i < Count; i++)
         {
-            var points = new Vector2() { x = x_index[i] * x_Distance, y = y_index[i] * -y_Distance };
+            var points = new Vector2() { x = i * x_Distance, y = y_index[i] * -y_Distance };
             var pointlist = new List<Vector2>(MyLine.Points);
             pointlist.Add(points);
             MyLine.Points = pointlist.ToArray();
@@ -63,5 +61,4 @@ public class PayoutCalculation : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
-
 }

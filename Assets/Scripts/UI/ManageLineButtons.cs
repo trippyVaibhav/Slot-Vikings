@@ -19,7 +19,7 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 	{
 		//if (Application.platform == RuntimePlatform.WebGLPlayer && !Application.isMobilePlatform)
 		//{
-			Debug.Log("run on pointer enter");
+			//Debug.Log("run on pointer enter");
 			slotManager.GenerateStaticLine(num_text);
 		//}
 	}
@@ -27,7 +27,7 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 	{
 		//if (Application.platform == RuntimePlatform.WebGLPlayer && !Application.isMobilePlatform)
 		//{
-			Debug.Log("run on pointer exit");
+			//Debug.Log("run on pointer exit");
 			slotManager.DestroyStaticLine();
 		//}
 	}
@@ -36,7 +36,7 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 		if (Application.platform == RuntimePlatform.WebGLPlayer && Application.isMobilePlatform)
 		{
 			this.gameObject.GetComponent<Button>().Select();
-			Debug.Log("run on pointer down");
+			//Debug.Log("run on pointer down");
 			slotManager.GenerateStaticLine(num_text);
 		}
 	}
@@ -44,7 +44,7 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 	{
 		if (Application.platform == RuntimePlatform.WebGLPlayer && Application.isMobilePlatform)
 		{
-			Debug.Log("run on pointer up");
+			//Debug.Log("run on pointer up");
 			slotManager.DestroyStaticLine();
 			DOVirtual.DelayedCall(0.1f, () =>
 			{
