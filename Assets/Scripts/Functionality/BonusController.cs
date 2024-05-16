@@ -19,6 +19,7 @@ public class BonusController : MonoBehaviour
     private GameObject Bonus_Object;
     [SerializeField]
     private SlotBehaviour slotManager;
+    internal bool isCollision = false;
 
     private Tween wheelRoutine;
 
@@ -42,6 +43,7 @@ public class BonusController : MonoBehaviour
 
     private void Spinbutton()
     {
+        isCollision = false;
         if (Spin_Button) Spin_Button.interactable = false;
         ResetColliders();
         RotateWheel();

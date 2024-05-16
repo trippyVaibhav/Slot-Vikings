@@ -9,7 +9,31 @@ public class Stopper : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("collision done");
-        _controller.StopWheel();
+        if (!_controller.isCollision)
+        {
+            _controller.isCollision = true;
+            Debug.Log("collision done");
+            _controller.StopWheel();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!_controller.isCollision)
+        {
+            _controller.isCollision = true;
+            Debug.Log("collision done");
+            _controller.StopWheel();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!_controller.isCollision)
+        {
+            _controller.isCollision = true;
+            Debug.Log("collision done");
+            _controller.StopWheel();
+        }
     }
 }
