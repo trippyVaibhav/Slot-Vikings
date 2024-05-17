@@ -624,6 +624,11 @@ public class SlotBehaviour : MonoBehaviour
         }
     }
 
+    internal void CallCloseSocket()
+    {
+        SocketManager.CloseWebSocket();
+    }
+
 
     internal void CheckBonusGame()
     {
