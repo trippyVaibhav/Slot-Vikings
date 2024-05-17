@@ -55,6 +55,14 @@ public class SocketIOManager : MonoBehaviour
         webSocket.Open();
     }
 
+    internal void CloseWebSocket()
+    {
+        if (currentSocket != null)
+        {
+            currentSocket.Close();
+        }
+    }
+
     private void OnWebSocketError(WebSocket webSocket, string message)
     {
         Debug.Log(message);
