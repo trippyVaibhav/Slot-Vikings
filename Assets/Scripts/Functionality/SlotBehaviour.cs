@@ -543,14 +543,28 @@ public class SlotBehaviour : MonoBehaviour
         }
 
         double bet = 0;
+        double balance = 0;
         try
         {
             bet = double.Parse(TotalBet_text.text);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.Log("Error while conversion " + e.Message);
         }
+
+        try
+        {
+            balance = double.Parse(Balance_text.text);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Error while conversion " + e.Message);
+        }
+
+        balance = balance - bet;
+
+        if (Balance_text) Balance_text.text = balance.ToString();
 
         SocketManager.AccumulateResult(bet);
 
