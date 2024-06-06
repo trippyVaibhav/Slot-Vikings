@@ -543,14 +543,28 @@ public class SlotBehaviour : MonoBehaviour
         }
 
         double bet = 0;
+        double balance = 0;
         try
         {
             bet = double.Parse(TotalBet_text.text);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.Log("Error while conversion " + e.Message);
         }
+
+        try
+        {
+            balance = double.Parse(Balance_text.text);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Error while conversion " + e.Message);
+        }
+
+        balance = balance - bet;
+
+        if (Balance_text) Balance_text.text = balance.ToString();
 
         SocketManager.AccumulateResult(bet);
 
@@ -593,6 +607,7 @@ public class SlotBehaviour : MonoBehaviour
         {
             uiManager.PopulateWin(1, SocketManager.resultData.WinAmout);
         }
+
         else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15)
         {
             uiManager.PopulateWin(2, SocketManager.resultData.WinAmout);
@@ -603,7 +618,7 @@ public class SlotBehaviour : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             CheckBonusGame();
         }
 
@@ -626,7 +641,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void CallCloseSocket()
     {
-        SocketManager.CloseWebSocket();
+        SocketManager.CloseSocket();
     }
 
 

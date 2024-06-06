@@ -4449,6 +4449,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotManager: {fileID: 2046803210}
   bonusdata: []
+  SocketURI: https://game-rtp-backend-w7g7.onrender.com
 --- !u!1 &502968745
 GameObject:
   m_ObjectHideFlags: 0
@@ -6413,10 +6414,10 @@ RectTransform:
   - {fileID: 1418009298}
   m_Father: {fileID: 1480051154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1069.7, y: 436.8}
-  m_SizeDelta: {x: 88.22, y: 84.36}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100.299805, y: -103.20007}
+  m_SizeDelta: {x: 88.21997, y: 84.359985}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &702497084
 MonoBehaviour:
