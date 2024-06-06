@@ -607,6 +607,7 @@ public class SlotBehaviour : MonoBehaviour
         {
             uiManager.PopulateWin(1, SocketManager.resultData.WinAmout);
         }
+
         else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15)
         {
             uiManager.PopulateWin(2, SocketManager.resultData.WinAmout);
@@ -617,7 +618,7 @@ public class SlotBehaviour : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             CheckBonusGame();
         }
 
@@ -640,7 +641,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void CallCloseSocket()
     {
-        SocketManager.CloseWebSocket();
+        SocketManager.CloseSocket();
     }
 
 
