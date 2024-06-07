@@ -49,8 +49,7 @@ public class SocketIOManager : MonoBehaviour
 
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        _jsManager.RetrieveAuthToken((authToken) =>
-        {
+        string authToken = _jsManager.RetrieveAuthToken("token");
         if (!string.IsNullOrEmpty(authToken))
         {
             Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
@@ -67,7 +66,6 @@ public class SocketIOManager : MonoBehaviour
         {
             Debug.LogError("Failed to retrieve auth token.");
         }
-        });
 #else
         Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
         {
