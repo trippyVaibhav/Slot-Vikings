@@ -47,8 +47,17 @@ public class SocketIOManager : MonoBehaviour
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
 #if UNITY_WEBGL && !UNITY_EDITOR
-        string authToken = _jsManager.RetrieveAuthToken();
-        SocketURI += "/?auth_token=" + authToken;
+        _jsManager.RetrieveAuthToken((authToken) =>
+        {
+        if (!string.IsNullOrEmpty(authToken))
+        {
+            SocketURI += "/?auth_token=" + authToken;
+        }
+        else
+        {
+            Debug.LogError("Failed to retrieve auth token.");
+        }
+        });
 #endif
         // Create and setup SocketManager
         this.manager = new SocketManager(new Uri(SocketURI), options);
