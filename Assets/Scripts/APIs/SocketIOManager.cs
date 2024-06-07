@@ -46,18 +46,36 @@ public class SocketIOManager : MonoBehaviour
         // Create and setup SocketOptions
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
+
+
 #if UNITY_WEBGL && !UNITY_EDITOR
-        _jsManager.RetrieveAuthToken((authToken) =>
-        {
+        string authToken = _jsManager.RetrieveAuthToken("token");
         if (!string.IsNullOrEmpty(authToken))
         {
-            SocketURI += "/?auth_token=" + authToken;
+            Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
+            {
+                // Return the authentication data as an anonymous object
+                return new
+                {
+                    token = authToken
+                };
+            };
+            options.Auth = authFunction;
         }
         else
         {
             Debug.LogError("Failed to retrieve auth token.");
         }
-        });
+#else
+        Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
+        {
+            // Return the authentication data as an anonymous object
+            return new
+            {
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhdXJhdiIsImRlc2lnbmF0aW9uIjoiY29tcGFueSIsImlhdCI6MTcxNzY3NDAyNiwiZXhwIjoxNzE3NzYwNDI2fQ._DgHo-YpNwtbDE55nMOERjZ3VEL167VvcRGzSU41qyo"
+            };
+        };
+        options.Auth = authFunction;
 #endif
         // Create and setup SocketManager
         this.manager = new SocketManager(new Uri(SocketURI), options);
