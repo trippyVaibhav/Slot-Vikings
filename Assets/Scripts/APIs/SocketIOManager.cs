@@ -28,6 +28,9 @@ public class SocketIOManager : MonoBehaviour
     private SocketManager manager;
 
     [SerializeField]
+    internal JSHandler _jsManager;
+
+    [SerializeField]
     private string SocketURI;
 
     protected string gameID = "SL-VIK";
@@ -43,7 +46,10 @@ public class SocketIOManager : MonoBehaviour
         // Create and setup SocketOptions
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
-
+#if UNITY_WEBGL && !UNITY_EDITOR
+        string authToken = _jsManager.RetrieveAuthToken();
+        SocketURI += "/?auth_token=" + authToken;
+#endif
         // Create and setup SocketManager
         this.manager = new SocketManager(new Uri(SocketURI), options);
 

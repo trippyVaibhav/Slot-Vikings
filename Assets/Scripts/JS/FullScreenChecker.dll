@@ -1,0 +1,12 @@
+﻿<script>
+    function IsFullscreen() {
+        return document.fullscreenElement != null || 
+               document.webkitFullscreenElement != null || 
+               document.mozFullScreenElement != null || 
+               document.msFullscreenElement != null;
+    }
+
+    mergeInto(LibraryManager.library, {
+        IsFullscreen: IsFullscreen
+    });
+</script>
