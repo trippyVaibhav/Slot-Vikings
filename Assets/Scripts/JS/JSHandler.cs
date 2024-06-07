@@ -22,14 +22,15 @@ public class JSHandler : MonoBehaviour
 
     private void Awake()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
         StartCoroutine(StartFullScreenCheck());
+#endif
     }
 
     private IEnumerator StartFullScreenCheck()
     {
         while (true)
         {
-#if UNITY_WEBGL && !UNITY_EDITOR
         IsFullscreen((authToken) =>
         {
             if (!authToken)
@@ -42,9 +43,8 @@ public class JSHandler : MonoBehaviour
                 RequestFullscreen();
             }
         });
-#endif
-        }
     }
+}
 
     private void IsFullscreen(System.Action<bool> callback)
     {

@@ -1,4 +1,4 @@
-#pragma strict
+﻿#pragma strict
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
