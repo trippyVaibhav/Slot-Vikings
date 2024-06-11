@@ -1,10 +1,9 @@
-﻿// CookieManager.jslib
 var CookieManager = {
     GetAuthToken: function(cookieName) {
         var name = cookieName + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
-        for(var i = 0; i < ca.length; i++) {
+        for (var i = 0; i < ca.length; i++) {
             var c = ca[i].trim();
             if (c.indexOf(name) == 0) {
                 var value = c.substring(name.length, c.length);
@@ -15,6 +14,9 @@ var CookieManager = {
             }
         }
         return null;
+    },
+    _free: function(ptr) {
+        _free(ptr);
     }
 };
 

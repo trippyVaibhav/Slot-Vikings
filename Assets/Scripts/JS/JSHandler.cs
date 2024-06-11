@@ -13,20 +13,56 @@ public class JSHandler : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void ForceFullScreen();
 
-    internal string RetrieveAuthToken(string cookieName)
+    internal void RetrieveAuthToken(string cookieName, Action<string> callback)
     {
-        IntPtr tokenPtr = GetAuthToken(cookieName);
+        IntPtr tokenPtr = IntPtr.Zero;
+        try
+        {
+            tokenPtr = GetAuthToken(cookieName);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Exception while calling GetAuthToken: " + ex.Message);
+            callback(null);
+            return;
+        }
 
-        // If the token is not null, convert it to a C# string
         if (tokenPtr != IntPtr.Zero)
         {
-            string token = Marshal.PtrToStringUTF8(tokenPtr);
-            return token;
+            try
+            {
+                string token = Marshal.PtrToStringUTF8(tokenPtr);
+                Debug.Log("Token successfully retrieved and converted: " + token);
+                FreeMemory(tokenPtr);
+                callback(token);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Exception while converting token pointer to string: " + ex.Message);
+                callback(null);
+            }
         }
         else
         {
-            Debug.Log("Token not found");
-            return null;
+            Debug.LogWarning("Token not found. Pointer is null.");
+            callback(null);
+        }
+    }
+
+
+    [DllImport("__Internal")]
+    private static extern void _free(IntPtr ptr);
+
+    private void FreeMemory(IntPtr ptr)
+    {
+        try
+        {
+            _free(ptr);
+            Debug.Log("Memory successfully freed.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Exception while freeing memory: " + ex.Message);
         }
     }
 
