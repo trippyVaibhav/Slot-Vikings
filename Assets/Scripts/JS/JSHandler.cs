@@ -18,7 +18,9 @@ public class JSHandler : MonoBehaviour
         IntPtr tokenPtr = IntPtr.Zero;
         try
         {
+            Debug.Log("Run token pointer");
             tokenPtr = GetAuthToken(cookieName);
+            Debug.Log("Run token " + tokenPtr);
         }
         catch (Exception ex)
         {
@@ -49,15 +51,14 @@ public class JSHandler : MonoBehaviour
         }
     }
 
-
     [DllImport("__Internal")]
-    private static extern void _free(IntPtr ptr);
+    private static extern void FreeAuthToken(IntPtr ptr);
 
     private void FreeMemory(IntPtr ptr)
     {
         try
         {
-            _free(ptr);
+            FreeAuthToken(ptr);
             Debug.Log("Memory successfully freed.");
         }
         catch (Exception ex)
