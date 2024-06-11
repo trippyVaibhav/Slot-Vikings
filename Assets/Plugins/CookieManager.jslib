@@ -15,7 +15,7 @@ var CookieManager = {
         }
         return null;
     },
-    _free: function(ptr) {
+    FreeAuthToken: function(ptr) {
         _free(ptr);
     }
 };
