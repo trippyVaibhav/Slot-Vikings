@@ -45,7 +45,10 @@ public class SocketIOManager : MonoBehaviour
     {
         Debug.Log("Received authToken: " + authToken);
         // Do something with the authToken
+        myAuth = authToken;
     }
+
+    string myAuth = null;
 
     private void OpenSocket()
     {
@@ -56,7 +59,7 @@ public class SocketIOManager : MonoBehaviour
         Application.ExternalCall("window.parent.postMessage", "authToken", "*");
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    _jsManager.RetrieveAuthToken("token", authToken =>
+        _jsManager.RetrieveAuthToken("token", authToken =>
         {
             if (!string.IsNullOrEmpty(authToken))
             {
@@ -69,29 +72,62 @@ public class SocketIOManager : MonoBehaviour
                     };
                 };
                 options.Auth = authFunction;
+                // Proceed with connecting to the server
+                SetupSocketManager(options);
             }
             else
             {
-                    Application.ExternalEval(@"
+                Application.ExternalEval(@"
                 window.addEventListener('message', function(event) {
                     if (event.data.type === 'authToken') {
                         // Send the message to Unity
-                        SendMessage('SocketIOManager', 'ReceiveAuthToken', event.data.cookie);
+                        SendMessage('SocketManager', 'ReceiveAuthToken', event.data.cookie);
                     }});");
+
+                // Start coroutine to wait for the auth token
+                StartCoroutine(WaitForAuthToken(options));
             }
         });
-
 #else
         Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
         {
-            // Return the authentication data as an anonymous object
             return new
             {
                 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhdXJhdiIsImRlc2lnbmF0aW9uIjoiY29tcGFueSIsImlhdCI6MTcxODA4MzM3MCwiZXhwIjoxNzE4MTY5NzcwfQ.rJ5Ger1nqwogz5P7POPKRhuiNK6gG1vjsUQhtgKa0WM"
             };
         };
         options.Auth = authFunction;
+        // Proceed with connecting to the server
+        SetupSocketManager(options);
 #endif
+    }
+
+    private IEnumerator WaitForAuthToken(SocketOptions options)
+    {
+        // Wait until myAuth is not null
+        while (myAuth == null)
+        {
+            yield return null;
+        }
+
+        // Once myAuth is set, configure the authFunction
+        Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
+        {
+            return new
+            {
+                token = myAuth
+            };
+        };
+        options.Auth = authFunction;
+
+        Debug.Log("Auth function configured with token: " + myAuth);
+
+        // Proceed with connecting to the server
+        SetupSocketManager(options);
+    }
+
+    private void SetupSocketManager(SocketOptions options)
+    {
         // Create and setup SocketManager
         this.manager = new SocketManager(new Uri(SocketURI), options);
 
