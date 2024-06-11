@@ -52,6 +52,7 @@ public class SocketIOManager : MonoBehaviour
         string authToken = _jsManager.RetrieveAuthToken("token");
         if (!string.IsNullOrEmpty(authToken))
         {
+            Debug.Log("auth token is " + authToken);
             Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
             {
                 // Return the authentication data as an anonymous object
@@ -72,7 +73,7 @@ public class SocketIOManager : MonoBehaviour
             // Return the authentication data as an anonymous object
             return new
             {
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhdXJhdiIsImRlc2lnbmF0aW9uIjoiY29tcGFueSIsImlhdCI6MTcxNzY3NDAyNiwiZXhwIjoxNzE3NzYwNDI2fQ._DgHo-YpNwtbDE55nMOERjZ3VEL167VvcRGzSU41qyo"
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhdXJhdiIsImRlc2lnbmF0aW9uIjoiY29tcGFueSIsImlhdCI6MTcxODA4MzM3MCwiZXhwIjoxNzE4MTY5NzcwfQ.rJ5Ger1nqwogz5P7POPKRhuiNK6gG1vjsUQhtgKa0WM"
             };
         };
         options.Auth = authFunction;
