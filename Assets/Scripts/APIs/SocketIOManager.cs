@@ -41,12 +41,19 @@ public class SocketIOManager : MonoBehaviour
         OpenSocket();
     }
 
+    void ReceiveAuthToken(string authToken)
+    {
+        Debug.Log("Received authToken: " + authToken);
+        // Do something with the authToken
+    }
+
     private void OpenSocket()
     {
         // Create and setup SocketOptions
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
 
+        Application.ExternalCall("window.parent.postMessage", "authToken", "*");
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     _jsManager.RetrieveAuthToken("token", authToken =>
@@ -65,7 +72,12 @@ public class SocketIOManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Failed to retrieve auth token.");
+                    Application.ExternalEval(@"
+                window.addEventListener('message', function(event) {
+                    if (event.data.type === 'authToken') {
+                        // Send the message to Unity
+                        SendMessage('SocketIOManager', 'ReceiveAuthToken', event.data.cookie);
+                    }});");
             }
         });
 
