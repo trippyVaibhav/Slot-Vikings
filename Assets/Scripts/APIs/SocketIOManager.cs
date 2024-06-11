@@ -49,24 +49,26 @@ public class SocketIOManager : MonoBehaviour
 
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        string authToken = _jsManager.RetrieveAuthToken("token");
-        if (!string.IsNullOrEmpty(authToken))
+    _jsManager.RetrieveAuthToken("token", authToken =>
         {
-            Debug.Log("auth token is " + authToken);
-            Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
+            if (!string.IsNullOrEmpty(authToken))
             {
-                // Return the authentication data as an anonymous object
-                return new
+                Debug.Log("Auth token is " + authToken);
+                Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
                 {
-                    token = authToken
+                    return new
+                    {
+                        token = authToken
+                    };
                 };
-            };
-            options.Auth = authFunction;
-        }
-        else
-        {
-            Debug.LogError("Failed to retrieve auth token.");
-        }
+                options.Auth = authFunction;
+            }
+            else
+            {
+                Debug.LogError("Failed to retrieve auth token.");
+            }
+        });
+
 #else
         Func<SocketManager, Socket, object> authFunction = (manager, socket) =>
         {
